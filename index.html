@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub User Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        #UserInfo {
+            margin-top: 20px;
+        }
+        img {
+            border-radius: 50%;
+            margin-top: 10px;
+        }
+        p, h2 {
+            margin: 5px 0;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>GitHub User Info</h1>
+    <input type="text" id="username" placeholder="Enter GitHub Username" value="kasmin9" />
+    <button id="fetchuser">Get User Info</button>
+    <div id="UserInfo">
+        <!-- User info will be displayed here -->
+    </div>
+
+    <script>
+        document.getElementById('fetchuser').addEventListener('click', async () => {
+            const username = document.getElementById('username').value.trim();
+            const userInfodiv = document.getElementById('UserInfo');
+
+            // Clear previous info
+            userInfodiv.innerHTML = '';
+
+            if (!username) {
+                userInfodiv.innerHTML = '<p class="error">Please enter a username!</p>';
+                return;
+            }
+
+            try {
+                // Fetch user data from GitHub API
+                const response = await fetch(`https://api.githgiub.com/users/${username}`);
+                if (!response.ok) {
+                    throw new Error('User not found. Please check the username.');
+                }
+                const data = await response.json();
+
+                // Display user information
+                userInfodiv.innerHTML = `
+                    <img src="${data.avatar_url}" alt="${data.login}'s avatar" style="width:100px;" />
+                    <h2>${data.name || 'No name provided'}</h2>
+                    <p><strong>Bio:</strong> ${data.bio || 'No bio provided'}</p>
+                    <p><strong>Public Repos:</strong> ${data.public_repos}</p>
+                    <p><strong>Followers:</strong> ${data.followers}</p>
+                    <p><strong>Following:</strong> ${data.following}</p>
+                `;
+            } catch (error) {
+                userInfodiv.innerHTML = `<p class="error">${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
